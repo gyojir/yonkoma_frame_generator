@@ -92,24 +92,28 @@
     cvs.width = image_width;
     cvs.height = image_height;
 
+    white_line = create_white_line();
+    vertical_line = create_vertical_line();
+    horizontal_line = create_horizontal_line();
+
     // コマを上から描いていく
     for(let y = 0; y < image_height; y++){
       let tmp = margin
 
       if(y < tmp)
-        ctx.putImageData(white_line(), 0, y);
+        ctx.putImageData(white_line, 0, y);
       // タイトルの上側
       else if(y < (tmp += border_thickness))
-        ctx.putImageData(horizontal_line(), 0, y);
+        ctx.putImageData(horizontal_line, 0, y);
       // タイトルの側線
       else if(y < (tmp += title_height))
-        ctx.putImageData(vertical_line(), 0, y);
+        ctx.putImageData(vertical_line, 0, y);
       // タイトルの下側
       else if(y < (tmp += border_thickness))
-        ctx.putImageData(horizontal_line(), 0, y);
+        ctx.putImageData(horizontal_line, 0, y);
       // タイトルとコマの間
       else if(y < (tmp += interval))
-        ctx.putImageData(white_line(), 0, y);
+        ctx.putImageData(white_line, 0, y);
       // ここから各コマ
       else if(((y - tmp) / segment_pitch) < segment_count){
         // 1コマ目を基準とした座標を、コマとコマの距離で割った余りがコマ内でのy座標
@@ -117,13 +121,13 @@
         tmp = 0;
         // コマの上側
         if(segment_y < (tmp += border_thickness))
-          ctx.putImageData(horizontal_line(), 0, y);
+          ctx.putImageData(horizontal_line, 0, y);
         // コマの側線
         else if(segment_y < (tmp += segment_height))
-          ctx.putImageData(vertical_line(), 0, y);
+          ctx.putImageData(vertical_line, 0, y);
         // コマの下側
         else if(segment_y < (tmp += border_thickness))
-          ctx.putImageData(horizontal_line(), 0, y);
+          ctx.putImageData(horizontal_line, 0, y);
       }
     }
 
@@ -133,7 +137,7 @@
   }
 
   // 横線の一行分
-  function horizontal_line(){
+  function create_horizontal_line(){
     let img = ctx.createImageData(image_width, 1);
     for(let x = 0; x < image_width; x++){
       let c = (margin <= x && x < right_end)? 0x000000FF : 0xFFFFFFFF;
@@ -143,7 +147,7 @@
   }
 
   // 縦線の一行分
-  function vertical_line(){
+  function create_vertical_line(){
     let img = ctx.createImageData(image_width, 1);
     for(let x = 0; x < image_width; x++){
       let c = (margin <= x && x < margin + border_thickness) ||
@@ -154,7 +158,7 @@
   }
 
   // 空白の一行分
-  function white_line(){
+  function create_white_line(){
     let img = ctx.createImageData(image_width, 1);
     for(let x = 0; x < image_width; x++){
       setColor(img, x, 0xFFFFFFFF);
