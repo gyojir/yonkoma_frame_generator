@@ -20,15 +20,15 @@
     </div>
 
     <div class="sidebar">
-      <form onsubmit="drawImg(); return false;" onblur="drawImg()">
+      <form onsubmit="drawImg(); return false;">
           <ul>
-            <li><label for="margin">余白</label><input type="text" name="margin" value="69">px</li>
-            <li><label for="interval">コマ間隔</label><input type="text" name="interval" value="69">px</li>
-            <li><label for="border_thickness">枠線</label><input type="text" name="border_thickness" value="14">px</li>
-            <li><label for="title_height">タイトル高さ</label><input type="text" name="title_height" value="220">px</li>
-            <li><label for="segment_height">コマ高さ</label><input type="text" name="segment_height" value="771">px</li>
-            <li><label for="segment_width">コマ幅</label><input type="text" name="segment_width" value="1143">px</li>
-            <li><label for="segment_count">コマ数</label><input type="text" name="segment_count" value="4"></li>
+            <li><label for="margin">余白</label><input type="text" name="margin" value="69" onblur="drawImg()">px</li>
+            <li><label for="interval">コマ間隔</label><input type="text" name="interval" value="69" onblur="drawImg()">px</li>
+            <li><label for="border_thickness">枠線</label><input type="text" name="border_thickness" value="14" onblur="drawImg()">px</li>
+            <li><label for="title_height">タイトル高さ</label><input type="text" name="title_height" value="220" onblur="drawImg()">px</li>
+            <li><label for="segment_height">コマ高さ</label><input type="text" name="segment_height" value="771" onblur="drawImg()">px</li>
+            <li><label for="segment_width">コマ幅</label><input type="text" name="segment_width" value="1143" onblur="drawImg()">px</li>
+            <li><label for="segment_count">コマ数</label><input type="text" name="segment_count" value="4" onblur="drawImg()"</li>
             <li><button type="submit" style="opacity:0.1"></li>
           </ul>
       </form>
