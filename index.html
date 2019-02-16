@@ -1,152 +1,169 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>4コマジェネレーター</title>
+  <meta charset="utf-8">
+  <title>4コマジェネレーター</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <canvas id="cv1" width="360" height="240" hidden></canvas>
 
-  <script>
-    var cvs = document.getElementById("cv1");
-    var ctx = cvs.getContext("2d");
+  <header class="title">
+    <h1>4コマジェネレーター</h1>
+    <p>4コマ漫画の枠線画像を作れるよ</p>
+  </header>
 
-    var margin = 0;           // 余白
-    var interval = 0;         // コマとコマの間隔
-    var border_thickness = 0; // 枠の太さ
-    var title_height = 0;     // タイトルの高さ
-    var segment_height = 0;   // コマの高さ
-    var segment_width = 0;    // コマの幅
-    var segment_count = 0;    // コマの数
+  <div class="container">
+    <div class="main">
+      <img id="img">
+    </div>
 
-    var image_height = 0;     // 画像高さ
-    var image_width = 0;      // 画像幅
-    var right_end = 0;        // コマの右端位置（枠線含む）
-    var segment_pitch = 0;    // コマから次のコマへの距離
-
-    function drawImg(){
-      margin = +document.getElementsByName("margin")[0].value;
-      interval = +document.getElementsByName("interval")[0].value;
-      border_thickness = +document.getElementsByName("border_thickness")[0].value;
-      title_height = +document.getElementsByName("title_height")[0].value;
-      segment_height = +document.getElementsByName("segment_height")[0].value;
-      segment_width = +document.getElementsByName("segment_width")[0].value;
-      segment_count = +document.getElementsByName("segment_count")[0].value;
-
-      // 画像高さ
-      image_height = margin * 2
-                   + title_height
-                   + segment_height * segment_count
-                   + border_thickness * 2 * (1+segment_count)
-                   + interval * segment_count;
-
-      // 画像幅
-      image_width = margin * 2
-                  + segment_width
-                  + border_thickness * 2;
-
-      // コマの右端位置（枠線含む）
-      right_end = image_width - margin;
-
-      // コマから次のコマへの距離
-      segment_pitch = border_thickness*2 + segment_height + interval;
-
-      // 画像サイズ変更
-      cvs.width = image_width;
-      cvs.height = image_height;
-
-      // コマを上から描いていく
-      for(let y = 0; y < image_height; y++){
-        let tmp = margin
-
-        if(y < tmp)
-          ctx.putImageData(white_line(), 0, y);
-        // タイトルの上側
-        else if(y < (tmp += border_thickness))
-          ctx.putImageData(horizontal_line(), 0, y);
-        // タイトルの側線
-        else if(y < (tmp += title_height))
-          ctx.putImageData(vertical_line(), 0, y);
-        // タイトルの下側
-        else if(y < (tmp += border_thickness))
-          ctx.putImageData(horizontal_line(), 0, y);
-        // タイトルとコマの間
-        else if(y < (tmp += interval))
-          ctx.putImageData(white_line(), 0, y);
-        // ここから各コマ
-        else if(((y - tmp) / segment_pitch) < segment_count){
-          // 1コマ目を基準とした座標を、コマとコマの距離で割った余りがコマ内でのy座標
-          let segment_y = (y - tmp) % segment_pitch;
-          tmp = 0;
-          // コマの上側
-          if(segment_y < (tmp += border_thickness))
-            ctx.putImageData(horizontal_line(), 0, y);
-          // コマの側線
-          else if(segment_y < (tmp += segment_height))
-            ctx.putImageData(vertical_line(), 0, y);
-          // コマの下側
-          else if(segment_y < (tmp += border_thickness))
-            ctx.putImageData(horizontal_line(), 0, y);
-        }
-      }
-
-      var png = cvs.toDataURL();
-      document.getElementById("img").src = png;
-    }
-
-    function horizontal_line(){
-      let img = ctx.createImageData(image_width, 1);
-      for(let x = 0; x < image_width; x++){
-        let c = (margin <= x && x < right_end)? 0x000000FF : 0xFFFFFFFF;
-        setColor(img, x, c);
-      }
-      return img;
-    }
-
-    // 縦線の一行分
-    function vertical_line(){
-      let img = ctx.createImageData(image_width, 1);
-      for(let x = 0; x < image_width; x++){
-        let c = (margin <= x && x < margin + border_thickness) ||
-                (right_end - border_thickness <= x && x < right_end)? 0x000000FF : 0xFFFFFFFF;
-        setColor(img, x, c);
-      }
-      return img;
-    }
-
-    function white_line(){
-      let img = ctx.createImageData(image_width, 1);
-      for(let x = 0; x < image_width; x++){
-        setColor(img, x, 0xFFFFFFFF);
-      }
-      return img;
-    }
-
-    // RGBAを書き込む
-    function setColor( imageData , p, rgba ){
-    	var i = p * 4;
-    	imageData.data[i + 0] = (rgba >>> 24) & 0xff;
-    	imageData.data[i + 1] = (rgba >>> 16) & 0xff;
-    	imageData.data[i + 2] = (rgba >>>  8) & 0xff;
-    	imageData.data[i + 3] = (rgba >>>  0) & 0xff;
-    }
-  </script>
-
-  <div id="container">
-    <img id="img">
-
-    <div>
+    <div class="sidebar">
       <form onsubmit="drawImg(); return false;">
-        <p><label for="namae">余白：</label><input type="text" name="margin" value="69"></p>
-        <p><label for="namae">コマ間隔：<input type="text" name="interval" value="69"></p>
-        <p><label for="namae">枠線：<input type="text" name="border_thickness" value="14"></p>
-        <p><label for="namae">タイトル高さ：<input type="text" name="title_height" value="220"></p>
-        <p><label for="namae">コマ高さ：<input type="text" name="segment_height" value="771"></p>
-        <p><label for="namae">コマ幅：<input type="text" name="segment_width" value="1143"></p>
-        <p><label for="namae">コマ数：<input type="text" name="segment_count" value="4"></p>
-        <p><button type="submit" style="opacity:0.1"></p>
+          <ul>
+            <li><label for="margin">余白</label><input type="text" name="margin" value="69">px</li>
+            <li><label for="interval">コマ間隔</label><input type="text" name="interval" value="69">px</li>
+            <li><label for="border_thickness">枠線</label><input type="text" name="border_thickness" value="14">px</li>
+            <li><label for="title_height">タイトル高さ</label><input type="text" name="title_height" value="220">px</li>
+            <li><label for="segment_height">コマ高さ</label><input type="text" name="segment_height" value="771">px</li>
+            <li><label for="segment_width">コマ幅</label><input type="text" name="segment_width" value="1143">px</li>
+            <li><label for="segment_count">コマ数</label><input type="text" name="segment_count" value="4"></li>
+            <li><button type="submit" style="opacity:0.1"></li>
+          </ul>
       </form>
-    <div>
+    </div>
   </div>
 </body>
+
+<script>
+  var cvs = document.getElementById("cv1");
+  var ctx = cvs.getContext("2d");
+
+  ctx.mozImageSmoothingEnabled = false;
+  ctx.webkitImageSmoothingEnabled = false;
+  ctx.msImageSmoothingEnabled = false;
+  ctx.imageSmoothingEnabled = false;
+
+  var margin = 0;           // 余白
+  var interval = 0;         // コマとコマの間隔
+  var border_thickness = 0; // 枠の太さ
+  var title_height = 0;     // タイトルの高さ
+  var segment_height = 0;   // コマの高さ
+  var segment_width = 0;    // コマの幅
+  var segment_count = 0;    // コマの数
+
+  var image_height = 0;     // 画像高さ
+  var image_width = 0;      // 画像幅
+  var right_end = 0;        // コマの右端位置（枠線含む）
+  var segment_pitch = 0;    // コマから次のコマへの距離
+
+  drawImg();
+
+  function drawImg(){
+    margin = +document.getElementsByName("margin")[0].value;
+    interval = +document.getElementsByName("interval")[0].value;
+    border_thickness = +document.getElementsByName("border_thickness")[0].value;
+    title_height = +document.getElementsByName("title_height")[0].value;
+    segment_height = +document.getElementsByName("segment_height")[0].value;
+    segment_width = +document.getElementsByName("segment_width")[0].value;
+    segment_count = +document.getElementsByName("segment_count")[0].value;
+
+    // 画像高さ
+    image_height = margin * 2
+                 + title_height
+                 + segment_height * segment_count
+                 + border_thickness * 2 * (1+segment_count)
+                 + interval * segment_count;
+
+    // 画像幅
+    image_width = margin * 2
+                + segment_width
+                + border_thickness * 2;
+
+    // コマの右端位置（枠線含む）
+    right_end = image_width - margin;
+
+    // コマから次のコマへの距離
+    segment_pitch = border_thickness*2 + segment_height + interval;
+
+    // 画像サイズ変更
+    cvs.width = image_width;
+    cvs.height = image_height;
+
+    // コマを上から描いていく
+    for(let y = 0; y < image_height; y++){
+      let tmp = margin
+
+      if(y < tmp)
+        ctx.putImageData(white_line(), 0, y);
+      // タイトルの上側
+      else if(y < (tmp += border_thickness))
+        ctx.putImageData(horizontal_line(), 0, y);
+      // タイトルの側線
+      else if(y < (tmp += title_height))
+        ctx.putImageData(vertical_line(), 0, y);
+      // タイトルの下側
+      else if(y < (tmp += border_thickness))
+        ctx.putImageData(horizontal_line(), 0, y);
+      // タイトルとコマの間
+      else if(y < (tmp += interval))
+        ctx.putImageData(white_line(), 0, y);
+      // ここから各コマ
+      else if(((y - tmp) / segment_pitch) < segment_count){
+        // 1コマ目を基準とした座標を、コマとコマの距離で割った余りがコマ内でのy座標
+        let segment_y = (y - tmp) % segment_pitch;
+        tmp = 0;
+        // コマの上側
+        if(segment_y < (tmp += border_thickness))
+          ctx.putImageData(horizontal_line(), 0, y);
+        // コマの側線
+        else if(segment_y < (tmp += segment_height))
+          ctx.putImageData(vertical_line(), 0, y);
+        // コマの下側
+        else if(segment_y < (tmp += border_thickness))
+          ctx.putImageData(horizontal_line(), 0, y);
+      }
+    }
+
+    var png = cvs.toDataURL();
+    document.getElementById("img").src = png;
+  }
+
+  function horizontal_line(){
+    let img = ctx.createImageData(image_width, 1);
+    for(let x = 0; x < image_width; x++){
+      let c = (margin <= x && x < right_end)? 0x000000FF : 0xFFFFFFFF;
+      setColor(img, x, c);
+    }
+    return img;
+  }
+
+  // 縦線の一行分
+  function vertical_line(){
+    let img = ctx.createImageData(image_width, 1);
+    for(let x = 0; x < image_width; x++){
+      let c = (margin <= x && x < margin + border_thickness) ||
+              (right_end - border_thickness <= x && x < right_end)? 0x000000FF : 0xFFFFFFFF;
+      setColor(img, x, c);
+    }
+    return img;
+  }
+
+  function white_line(){
+    let img = ctx.createImageData(image_width, 1);
+    for(let x = 0; x < image_width; x++){
+      setColor(img, x, 0xFFFFFFFF);
+    }
+    return img;
+  }
+
+  // RGBAを書き込む
+  function setColor( imageData , p, rgba ){
+  	var i = p * 4;
+  	imageData.data[i + 0] = (rgba >>> 24) & 0xff;
+  	imageData.data[i + 1] = (rgba >>> 16) & 0xff;
+  	imageData.data[i + 2] = (rgba >>>  8) & 0xff;
+  	imageData.data[i + 3] = (rgba >>>  0) & 0xff;
+  }
+</script>
 </html>
