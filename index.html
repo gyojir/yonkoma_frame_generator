@@ -20,7 +20,7 @@
     </div>
 
     <div class="sidebar">
-      <form onsubmit="drawImg(); return false;">
+      <form onsubmit="drawImg(); return false;" onblur="drawImg()">
           <ul>
             <li><label for="margin">余白</label><input type="text" name="margin" value="69">px</li>
             <li><label for="interval">コマ間隔</label><input type="text" name="interval" value="69">px</li>
@@ -61,13 +61,14 @@
   drawImg();
 
   function drawImg(){
-    margin = +document.getElementsByName("margin")[0].value;
-    interval = +document.getElementsByName("interval")[0].value;
-    border_thickness = +document.getElementsByName("border_thickness")[0].value;
-    title_height = +document.getElementsByName("title_height")[0].value;
-    segment_height = +document.getElementsByName("segment_height")[0].value;
-    segment_width = +document.getElementsByName("segment_width")[0].value;
-    segment_count = +document.getElementsByName("segment_count")[0].value;
+    // 入力読み込み
+    margin = +document.getElementsByName("margin")[0].value;                      // 余白
+    interval = +document.getElementsByName("interval")[0].value;                  // コマとコマの間隔
+    border_thickness = +document.getElementsByName("border_thickness")[0].value;  // 枠の太さ
+    title_height = +document.getElementsByName("title_height")[0].value;          // タイトルの高さ
+    segment_height = +document.getElementsByName("segment_height")[0].value;      // コマの高さ
+    segment_width = +document.getElementsByName("segment_width")[0].value;        // コマの幅
+    segment_count = +document.getElementsByName("segment_count")[0].value;        // コマの数
 
     // 画像高さ
     image_height = margin * 2
@@ -126,10 +127,12 @@
       }
     }
 
+    // 画像に変換
     var png = cvs.toDataURL();
     document.getElementById("img").src = png;
   }
 
+  // 横線の一行分
   function horizontal_line(){
     let img = ctx.createImageData(image_width, 1);
     for(let x = 0; x < image_width; x++){
@@ -150,6 +153,7 @@
     return img;
   }
 
+  // 空白の一行分
   function white_line(){
     let img = ctx.createImageData(image_width, 1);
     for(let x = 0; x < image_width; x++){
