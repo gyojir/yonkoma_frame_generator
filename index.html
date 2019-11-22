@@ -128,6 +128,9 @@
         // コマの下側
         else if(segment_y < (tmp += border_thickness))
           ctx.putImageData(horizontal_line, 0, y);
+        // コマ下の余白
+        else if(segment_y < (tmp += interval))
+          ctx.putImageData(white_line, 0, y);
       }
     }
 
